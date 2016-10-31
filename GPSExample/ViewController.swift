@@ -27,7 +27,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var xLabel: UILabel!
     @IBOutlet weak var yLabel: UILabel!
     @IBOutlet weak var zLabel: UILabel!
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if locations.count == 0{
             //handle error here
@@ -43,26 +43,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func locationManager(manager: CLLocationManager,
-        didFailWithError error: NSError){
+    func locationManager(_ manager: CLLocationManager,
+        didFailWithError error: Error){
             print("Location manager failed with error = \(error)")
     }
     
-    func locationManager(manager: CLLocationManager,
+    private func locationManager(manager: CLLocationManager,
         didChangeAuthorizationStatus status: CLAuthorizationStatus){
             
             print("The authorization status of location services is changed to: ", terminator: "")
             
             switch CLLocationManager.authorizationStatus(){
-            case .AuthorizedAlways:
+            case .authorizedAlways:
                 print("Authorized")
-            case .AuthorizedWhenInUse:
+            case .authorizedWhenInUse:
                 print("Authorized when in use")
-            case .Denied:
+            case .denied:
                 print("Denied")
-            case .NotDetermined:
+            case .notDetermined:
                 print("Not determined")
-            case .Restricted:
+            case .restricted:
                 print("Restricted")
             }
             
@@ -71,17 +71,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func displayAlertWithTitle(title: String, message: String){
         let controller = UIAlertController(title: title,
             message: message,
-            preferredStyle: .Alert)
+            preferredStyle: .alert)
         
         controller.addAction(UIAlertAction(title: "OK",
-            style: .Default,
+            style: .default,
             handler: nil))
         
-        presentViewController(controller, animated: true, completion: nil)
+        present(controller, animated: true, completion: nil)
         
     }
     
-    func createLocationManager(startImmediately startImmediately: Bool){
+    func createLocationManager(startImmediately: Bool){
         locationManager = CLLocationManager()
         if let manager = locationManager{
             print("Successfully created the location manager")
@@ -92,7 +92,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         /* Are location services available on this device? */
@@ -100,26 +100,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             
             /* Do we have authorization to access location services? */
             switch CLLocationManager.authorizationStatus(){
-            case .AuthorizedAlways:
+            case .authorizedAlways:
                 /* Yes, always */
                 createLocationManager(startImmediately: true)
-            case .AuthorizedWhenInUse:
+            case .authorizedWhenInUse:
                 /* Yes, only when our app is in use */
                 createLocationManager(startImmediately: true)
-            case .Denied:
+            case .denied:
                 /* No */
-                displayAlertWithTitle("Not Determined",
+                displayAlertWithTitle(title: "Not Determined",
                     message: "Location services are not allowed for this app")
-            case .NotDetermined:
+            case .notDetermined:
                 /* We don't know yet, we have to ask */
                 createLocationManager(startImmediately: false)
                 if let manager = self.locationManager{
                     manager.requestWhenInUseAuthorization()
                 }
-            case .Restricted:
+            case .restricted:
                 /* Restrictions have been applied, we have no access
                 to location services */
-                displayAlertWithTitle("Restricted",
+                displayAlertWithTitle(title: "Restricted",
                     message: "Location services are not allowed for this app")
             }
             
@@ -133,27 +133,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     // function to allow for detecting a shake
-    override func motionEnded(motion: UIEventSubtype,
-        withEvent event: UIEvent?) {
+    override func motionEnded(_ motion: UIEventSubtype,
+        with: UIEvent?) {
             
-            if motion == .MotionShake{
+            if motion == .motionShake{
                 let controller = UIAlertController(title: "Shake",
                     message: "The device is shaken",
-                    preferredStyle: .Alert)
+                    preferredStyle: .alert)
                 
                 controller.addAction(UIAlertAction(title: "OK",
-                    style: .Default,
+                    style: .default,
                     handler: nil))
                 
-                presentViewController(controller, animated: true, completion: nil)
+                present(controller, animated: true, completion: nil)
                 
             }
             
     }
     @IBAction func startAccel(sender: UIButton) {
-        if motionManager.accelerometerAvailable{
-            let queue = NSOperationQueue()
-            motionManager.startAccelerometerUpdatesToQueue(queue, withHandler:
+        if motionManager.isAccelerometerAvailable{
+            let queue = OperationQueue()
+            motionManager.startAccelerometerUpdates(to: queue, withHandler:
                 {data, error in
                     
                     guard let data = data else{
@@ -182,7 +182,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         zLabel.text = "z = " + String(zDir)
 
     }
-        
+    
     
     
 }
